@@ -34,17 +34,5 @@ foreach(pkgconfig_file IN LISTS pkgconfig_files)
         string(REGEX REPLACE "(^|\n)Libs.private:([^\n]*)"
                 "\\1Libs.private:\\2 -lpthread" content "${content}")
     endif()
-    if("@WIN32@" AND content MATCHES "-lvpl")
-        # oneVPL's Windows pkg-config metadata omits its C++ runtime. Keep the
-        # runtime after the dispatcher so C compiler consumers can link too.
-        if("@CMAKE_CXX_COMPILER_ID@" MATCHES "Clang")
-            set(cxx_runtime -lc++)
-        else()
-            set(cxx_runtime -lstdc++)
-        endif()
-        string(REPLACE "${cxx_runtime}" "" content "${content}")
-        string(REGEX REPLACE "(^|\n)Libs.private:([^\n]*)"
-                "\\1Libs.private:\\2 ${cxx_runtime}" content "${content}")
-    endif()
     file(WRITE "${pkgconfig_file}" "${content}")
 endforeach()

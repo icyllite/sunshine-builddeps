@@ -172,20 +172,25 @@ if(WIN32)
     endif()
     if(BUILD_FFMPEG_ENCODERS OR BUILD_FFMPEG_DECODERS)
         string(TOLOWER ${MSYSTEM} FFMPEG_MSYSTEM_DIRECTORY)
-        find_file(FFMPEG_VPL_STATIC_LIBRARY NAMES libvpl.a
+        find_file(FFMPEG_MFX_STATIC_LIBRARY NAMES libmfx.a
                 HINTS "${MSYS2_ROOT}/${FFMPEG_MSYSTEM_DIRECTORY}/lib" REQUIRED)
-        install(FILES ${FFMPEG_VPL_STATIC_LIBRARY} DESTINATION ${FFMPEG_INSTALL_PREFIX}/lib)
-        install(DIRECTORY "${MSYS2_ROOT}/${FFMPEG_MSYSTEM_DIRECTORY}/share/licenses/libvpl/"
-                DESTINATION ${FFMPEG_INSTALL_PREFIX}/share/licenses/vpl)
-        # Static oneVPL is implemented in C++; FFmpeg probes it with the C compiler.
+        install(FILES ${FFMPEG_MFX_STATIC_LIBRARY} DESTINATION ${FFMPEG_INSTALL_PREFIX}/lib)
+        # The MSYS2 libmfx package does not install a license file, so ship the
+        # upstream dispatcher license.
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ffmpeg/libmfx-LICENSE
+                DESTINATION ${FFMPEG_INSTALL_PREFIX}/share/licenses/libmfx)
+        # The legacy Media SDK dispatcher is implemented in C++; FFmpeg probes
+        # it with the C compiler.
         if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             list(APPEND FFMPEG_EXTRA_CONFIGURE --extra-libs='-lc++')
         else()
             list(APPEND FFMPEG_EXTRA_CONFIGURE --extra-libs='-lstdc++')
         endif()
-        list(APPEND FFMPEG_EXTRA_CONFIGURE --enable-libvpl)
+        list(APPEND FFMPEG_EXTRA_CONFIGURE --enable-libmfx)
+        # AV1 QSV is only available through oneVPL, which Media SDK replaces.
+        list(APPEND FFMPEG_EXTRA_CONFIGURE --disable-decoder=av1_qsv)
         if(BUILD_FFMPEG_ENCODERS)
-            list(APPEND FFMPEG_EXTRA_CONFIGURE --enable-encoder=h264_qsv,hevc_qsv,av1_qsv,mpeg2_qsv)
+            list(APPEND FFMPEG_EXTRA_CONFIGURE --enable-encoder=h264_qsv,hevc_qsv,mpeg2_qsv)
         endif()
     endif()
 elseif(APPLE)

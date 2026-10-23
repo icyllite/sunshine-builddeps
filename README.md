@@ -33,7 +33,7 @@ decoders, and tools together for each platform. Pin the release tag and archive 
 For applications linking the static libraries, point `PKG_CONFIG_PATH` at the extracted `lib/pkgconfig`
 directory and use `pkg-config --static` to obtain the complete link dependencies. The pkg-config files are
 relocatable. Platform graphics and system development libraries may still be required when linking hardware
-acceleration support. Windows archives use the MSYS2 MinGW toolchain and include the static oneVPL dispatcher.
+acceleration support. Windows archives use the MSYS2 MinGW toolchain and include the static Media SDK (libmfx) dispatcher.
 
 To build the dependencies from source:
 
@@ -220,7 +220,7 @@ pacman -S \
     mingw-w64-ucrt-x86_64-meson \
     mingw-w64-ucrt-x86_64-nasm \
     mingw-w64-ucrt-x86_64-ninja \
-    mingw-w64-ucrt-x86_64-onevpl
+    mingw-w64-ucrt-x86_64-libmfx
 ```
 
 ##### aarch64 / arm64
@@ -242,7 +242,7 @@ pacman -S \
     mingw-w64-clang-aarch64-meson \
     mingw-w64-clang-aarch64-nasm \
     mingw-w64-clang-aarch64-ninja \
-    mingw-w64-clang-aarch64-onevpl
+    mingw-w64-clang-aarch64-libmfx
 ```
 
 ### Configure
@@ -265,7 +265,7 @@ The dependency switches have the following roles, subject to platform support:
 | `BUILD_FFMPEG_OPUS`                                              | Opus encoder              | Opus decoder        |
 
 Disabling encoders preserves shared hardware backends for decoding. Windows D3D11VA, D3D12VA, DXVA2,
-and oneVPL/QSV, and macOS VideoToolbox are enabled by the platform configuration rather than separate
+and Media SDK/QSV, and macOS VideoToolbox are enabled by the platform configuration rather than separate
 dependency switches.
 
 Use the `Unix Makefiles` generator for Linux and macOS, and the `MSYS Makefiles` generator for Windows.
